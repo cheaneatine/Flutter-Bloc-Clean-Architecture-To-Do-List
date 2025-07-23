@@ -15,6 +15,22 @@ class Task extends Equatable {
     this.isCompleted = false,
   });
 
+  Task copyWith({
+    String? id,
+    String? name,
+    DateTime? dueDate,
+    int? colorValue,
+    bool? isCompleted,
+  }) {
+    return Task(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      dueDate: dueDate ?? this.dueDate,
+      colorValue: colorValue ?? this.colorValue,
+      isCompleted: isCompleted ?? this.isCompleted,
+    );
+  }
+
   @override
   List<Object?> get props => [id, name, dueDate, colorValue, isCompleted];
 }
