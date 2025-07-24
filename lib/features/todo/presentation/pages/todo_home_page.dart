@@ -1,20 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:uuid/uuid.dart';
+
 import '../../domain/entities/task.dart';
 import '../bloc/todo_bloc.dart';
 import '../bloc/todo_event.dart';
 import '../bloc/todo_state.dart';
+import '../../../theme/presentation/bloc/theme_bloc.dart';
+import '../../../theme/presentation/bloc/theme_event.dart';
+import '../../../theme/presentation/bloc/theme_state.dart';
 
-import 'package:uuid/uuid.dart';
-
-class TodoHomePage extends StatelessWidget {
-  const TodoHomePage({super.key});
+class ToDoHomePage extends StatelessWidget {
+  const ToDoHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('To-Do List')),
+      appBar: AppBar(
+        title: const Text('My To-Do List'),
+        actions: [
+          BlocBuilder<ThemeBloc, ThemeState>(
+            builder: (context, state) {
+              return IconButton(
+                icon: Icon(state.isDark ? Icons.dark_mode : Icons.light_mode),
+                onPressed: () =>
+                    context.read<ThemeBloc>().add(ToggleThemeEvent()),
+              );
+            },
+          ),
+        ],
+      ),
       body: BlocBuilder<TodoBloc, TodoState>(
         builder: (context, state) {
           if (state is TodoLoading) {
@@ -89,7 +105,7 @@ class TodoHomePage extends StatelessWidget {
         return StatefulBuilder(
           builder: (context, setState) {
             return Padding(
-              padding: EdgeInsetsGeometry.only(
+              padding: EdgeInsets.only(
                 left: 16,
                 right: 16,
                 top: 16,
@@ -160,9 +176,7 @@ class TodoHomePage extends StatelessWidget {
                           final pickedDate = await showDatePicker(
                             context: context,
                             initialDate: DateTime.now(),
-                            firstDate: DateTime.now().subtract(
-                              const Duration(days: 1),
-                            ),
+                            firstDate: DateTime.now(),
                             lastDate: DateTime(2100),
                           );
                           if (pickedDate != null) {
@@ -191,8 +205,8 @@ class TodoHomePage extends StatelessWidget {
                       final task = Task(
                         id: uuid.v4(),
                         name: name,
-                        colorValue: Colors.blue.value,
-                        dueDate: null,
+                        dueDate: selectedDueDate,
+                        colorValue: selectedColor.value,
                         isCompleted: false,
                       );
 
